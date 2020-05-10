@@ -1,9 +1,12 @@
 #ifndef __VECTOR_H__
 #define __VECTOR_H__
 
+#include <math.h>
+
 // https://stackoverflow.com/questions/51641131/how-to-achieve-vector-swizzling-in-c
 // https://en.wikipedia.org/wiki/Operators_in_C_and_C%2B%2B
 // http://learnwebgl.brown37.net/12_shader_language/glsl_mathematical_operations.html
+// http://learnwebgl.brown37.net/12_shader_language/documents/webgl-reference-card-1_0.pdf
 
 /*****************************************************************************/
 /* Vector2                                                                   */
@@ -112,6 +115,7 @@ struct Vector2 {
 	Vector2<T>& operator = (const Vector2<T>& rhs) {
 		x = rhs.x;
 		y = rhs.y;
+		return *this;
 	}
 
 	Vector2<T> operator + (const Vector2<T>& rhs) const {
@@ -209,8 +213,31 @@ struct Vector2 {
 		return d[index];
 	}
 
-	void print() {
-		printf("Vector2(%f, %f)\n", (float)x, (float)y);
+	T length() const {
+		return sqrtf(x * x + y * y);
+	}
+
+	Vector2<T> lerp(const Vector2<T>& other, float proc) const {
+		Vector2<T> ans;
+		const float inv = 1.0f - proc;
+		ans.x = x * proc + other.x * inv;
+		ans.y = y * proc + other.y * inv;
+		return ans;
+	}
+
+	T dot(const Vector2<T>& other) const {
+		return x * other.x + y * other.y;
+	}
+
+	Vector2<T>& normalize() {
+		float length = x * x + y * y;
+		if (length == 0 ) {
+			return *this;
+		}
+		length = 1.0f / sqrtf(length);
+		x = (T)(x * length);
+		y = (T)(y * length);
+		return *this;
 	}
 };
 
@@ -481,6 +508,42 @@ struct Vector3 {
 
 	T operator [] (const unsigned int index) const {
 		return d[index];
+	}
+
+	T length() const {
+		return sqrtf(x * x + y * y + z * z);
+	}
+
+	Vector3<T> lerp(const Vector3<T>& other, float value) const {
+		Vector3<T> ans;
+		const float inv = 1.0f - value;
+		ans.x = x * value + other.x * inv;
+		ans.y = y * value + other.y * inv;
+		ans.z = z * value + other.z * inv;
+		return ans;
+	}
+	
+	Vector3<T> cross(const Vector3<T>& other) const {
+		return Vector3<T>(y * other.z - z * other.y, z * other.x - x * other.z, x * other.y - y * other.x);
+	}
+
+	T dot(const Vector3<T>& other) const {
+		return x * other.x + y * other.y + z * other.z;
+	}
+
+	Vector3<T>& normalize() {
+		float length = x * x + y * y + z * z;
+		if (length == 0 ) {
+			return *this;
+		}
+
+		length = 1.0f / sqrtf(length);
+
+		x = (T)(x * length);
+		y = (T)(y * length);
+		z = (T)(z * length);
+		
+		return *this;
 	}
 };
 
@@ -1274,9 +1337,43 @@ struct Vector4 {
 	T operator [] (const unsigned int index) const {
 		return d[index];
 	}
+
+	T length() const {
+		return sqrtf(x * x + y * y + z * z + w * w);
+	}
+
+	Vector4<T> lerp(const Vector4<T>& other, float value) const {
+		Vector4<T> ans;
+		const float inv = 1.0f - value;
+		ans.x = x * value + other.x * inv;
+		ans.y = y * value + other.y * inv;
+		ans.z = z * value + other.z * inv;
+		ans.w = w * value + other.w * inv;
+		return ans;
+	}
+	
+	T dot(const Vector4<T>& other) const {
+		return x * other.x + y * other.y + z * other.z + w * other.w;
+	}
+
+	Vector4<T>& normalize() {
+		float length = x * x + y * y + z * z + w * w;
+		if (length == 0 ) {
+			return *this;
+		}
+
+		length = 1.0f / sqrtf(length);
+
+		x = (T)(x * length);
+		y = (T)(y * length);
+		z = (T)(z * length);
+		w = (T)(w * length);
+		
+		return *this;
+	}
 };
 
-#if defined (DEFINE_GLSL_VECTOR_TYPES)
+#if defined (VECTOR_DEFINE_GLSL_TYPES)
 // Vector 2
 typedef Vector2<bool> bvec2;
 typedef Vector2<signed int> ivec2;

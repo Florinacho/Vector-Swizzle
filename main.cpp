@@ -3,7 +3,7 @@
 #include <assert.h>
 #include <algorithm>
 
-#define DEFINE_GLSL_VECTOR_TYPES
+#define VECTOR_DEFINE_GLSL_TYPES
 #include "Vector.h"
 
 int main() {
@@ -79,12 +79,12 @@ int main() {
 	a = 3;
 	assert(a.x == 3 && a.y == 3);
 	(a = 2) = 1;
-//	assert(a.x == 1 && a.y == 1);
+	assert(a.x == 1 && a.y == 1);
 	
 	a = 3;
 	assert(a.x == 3 && a.y == 3);
-	(a.xy = 2) = 1;
-	assert(a.x == 1 && a.y == 1); // 1, 1
+	(a.yx = 2).yx = vec2(4,5);
+	assert(a.x == 5 && a.y == 4);
 	
 	a == 3.0f;
 	a == b;
@@ -212,6 +212,12 @@ int main() {
 	vec2 v2a = v0.xy;
 	vec2 v2b = v1.xy;
 	vec2 v2c = v0.xxy.yx.x;
+
+	vec2 v2f;
+	ivec2 v2i;
+
+	++v2f;
+	++v2i;
 
 	printf("Sanity check passed!\n");
 
