@@ -1,6 +1,6 @@
 CC=g++
-CFLAGS=-O3
-LFLAGS=-O3
+CFLAGS=-O3 -g3
+LFLAGS=-O3 -g3
 CFILES=main.cpp
 LFILES=main.o
 OUTPUT=a.out
