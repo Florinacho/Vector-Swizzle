@@ -36,6 +36,14 @@ void test_vec2(void *state) {
 void test_vec2_assign(void *state) {
 	vec2 vec;
 
+	vec = 3.0f;
+	assert_float_equal(vec.x, 3.0f);
+	assert_float_equal(vec.y, 3.0f);
+
+	vec = 4;
+	assert_float_equal(vec.x, 4.0f);
+	assert_float_equal(vec.y, 4.0f);
+
 	vec = vec2(1.0f, 2.0f);
 	assert_float_equal(vec.x, 1.0f);
 	assert_float_equal(vec.y, 2.0f);
@@ -165,6 +173,13 @@ void test_vec2_increment(void *state) {
 	assert_float_equal(tmp0.y, src.y + 1.0f);
 	assert_float_equal(tmp1.x, src.x + 1.0f);
 	assert_float_equal(tmp1.y, src.y + 1.0f);
+
+	tmp0 = src;
+	tmp1 = ++tmp0 = vec2(5.0f, 6.0f);
+	assert_float_equal(tmp0.x, 5.0f);
+	assert_float_equal(tmp0.y, 6.0f);
+	assert_float_equal(tmp1.x, 5.0f);
+	assert_float_equal(tmp1.y, 6.0f);
 }
 
 void test_vec2_decrement(void *state) {
@@ -184,6 +199,13 @@ void test_vec2_decrement(void *state) {
 	assert_float_equal(tmp0.y, src.y - 1.0f);
 	assert_float_equal(tmp1.x, src.x - 1.0f);
 	assert_float_equal(tmp1.y, src.y - 1.0f);
+
+	tmp0 = src;
+	tmp1 = --tmp0 = vec2(5.0f, 6.0f);
+	assert_float_equal(tmp0.x, 5.0f);
+	assert_float_equal(tmp0.y, 6.0f);
+	assert_float_equal(tmp1.x, 5.0f);
+	assert_float_equal(tmp1.y, 6.0f);
 }
 
 void test_vec2_equal(void *state) {
@@ -233,6 +255,10 @@ void test_vec2_swizzle(void *state) {
 
 void test_vec2_swizzle_assign(void *state) {
 	vec2 vec;
+
+	vec = 5.0f;
+	assert_float_equal(vec.x, 5.0f);
+	assert_float_equal(vec.y, 5.0f);
 
 	vec = vec2(1.0f, 2.0f);
 	assert_float_equal(vec.x, 1.0f);
@@ -369,6 +395,13 @@ void test_vec2_swizzle_increment(void *state) {
 	assert_float_equal(tmp1.y, src.y + 1.0f);
 
 	tmp0 = src;
+	tmp1 = (++tmp0.xx = vec2(5.0f, 6.0f)) += vec2(0.0f, 0);
+	assert_float_equal(tmp0.x, 6.0f);
+	assert_float_equal(tmp0.y, 2.0f);
+	assert_float_equal(tmp1.x, 6.0f);
+	assert_float_equal(tmp1.y, 6.0f);
+
+	tmp0 = src;
 	tmp1 = tmp0.xx++;
 	assert_float_equal(tmp0.x, src.x + 2.0f);
 	assert_float_equal(tmp0.y, src.y);
@@ -461,6 +494,19 @@ void test_vec2_swizzle_index(void *state) {
 }
 
 void test_vec2_misc(void *state) {
+	vec2 v0, v1;
+
+	v0 = vec2(1.0f, 2.0f);
+
+	float k = (++v0.xx + v0.yy++).x;
+	assert_float_equal(k, 5.0f);
+
+	assert_float_equal(v0.x, 3.0f);
+	assert_float_equal(v0.y, 4.0f);
+
+	(v0.xx += vec2(5.0f, 8.0f)) += vec2(1.0f, 2.0f);
+	assert_float_equal(v0.x, 19.0f);
+	assert_float_equal(v0.y, 4.0f);
 }
 
 void test_vec3_size(void *state) {
@@ -1903,14 +1949,6 @@ void test_vec4_swizzle_index(void *state) {
 }
 
 void test_vec4_misc(void *state) {
-	vec4 src(1.0f, 2.0f, 3.0f, 4.0f);
-	vec4 dst;
-
-	dst.xz = src.yy;
-	assert_float_equal(dst.x, 2.0f);
-	assert_float_equal(dst.y, 0.0f);
-	assert_float_equal(dst.z, 2.0f);
-	assert_float_equal(dst.w, 0.0f);
 }
 
 int main() {

@@ -18,21 +18,15 @@ struct Vector2 {
 			struct { T r, g; };
 			struct { T s, t; };
 		};
-		
-		Vector2<T>& operator = (const T& rhs) {
-			data[A] = rhs;
-			data[B] = rhs;
-			return *(Vector2<T>*)this;
-		}
 
-		Vector2<T>& operator = (const Vector2<T>& rhs) {
+		Vector2<T>::Swizzle<A, B>& operator = (const Vector2<T>& rhs) {
 			data[A] = rhs.x;
 			data[B] = rhs.y;
-			return *(Vector2<T>*)this;
+			return *this;
 		}
 
 		Vector2<T> operator + () const {
-			return Vector2<T>(data[A], data[B]);
+			return Vector2<T>(+data[A], +data[B]);
 		}
 
 		Vector2<T> operator - () const {
@@ -55,34 +49,34 @@ struct Vector2 {
 			return Vector2<T>(data[A] / rhs.x, data[B] / rhs.y);
 		}
 		
-		Vector2<T>& operator += (const Vector2<T>& rhs) {
+		Vector2<T>::Swizzle<A, B>& operator += (const Vector2<T>& rhs) {
 			data[A] += rhs.x;
 			data[B] += rhs.y;
-			return (*(Vector2<T>*)this);
+			return *this;
 		}
 		
-		Vector2<T>& operator -= (const Vector2<T>& rhs) {
+		Vector2<T>::Swizzle<A, B>& operator -= (const Vector2<T>& rhs) {
 			data[A] -= rhs.x;
 			data[B] -= rhs.y;
-			return (*(Vector2<T>*)this);
+			return *this;
 		}
 		
-		Vector2<T>& operator *= (const Vector2<T>& rhs) {
+		Vector2<T>::Swizzle<A, B>& operator *= (const Vector2<T>& rhs) {
 			data[A] *= rhs.x;
 			data[B] *= rhs.y;
-			return (*(Vector2<T>*)this);
+			return (*this);
 		}
 		
-		Vector2<T>& operator /= (const Vector2<T>& rhs) {
+		Vector2<T>::Swizzle<A, B>& operator /= (const Vector2<T>& rhs) {
 			data[A] /= rhs.x;
 			data[B] /= rhs.y;
-			return (*(Vector2<T>*)this);
+			return *this;
 		}
 		
-		Vector2<T> operator ++ () {
+		Vector2<T>::Swizzle<A, B>& operator ++ () {
 			++data[A];
 			++data[B];
-			return (*(Vector2<T>*)this);
+			return *this;
 		}
 		
 		Vector2<T> operator ++ (int) {
@@ -92,10 +86,10 @@ struct Vector2 {
 			return ans;
 		}
 		
-		Vector2<T> operator -- () {
+		Vector2<T>::Swizzle<A, B>& operator -- () {
 			--data[A];
 			--data[B];
-			return (*(Vector2<T>*)this);
+			return *this;
 		}
 		
 		Vector2<T> operator -- (int) {
@@ -113,9 +107,9 @@ struct Vector2 {
 			return ((data[A] != rhs.x) || (data[B] != rhs.y));
 		}
 
-		T operator [] (const unsigned int index) const {
-			const T new_data[] = {data[A], data[B]};
-			return new_data[index];
+		const T& operator [] (const unsigned int index) const {
+			const T* new_data[] = {&data[A], &data[B]};
+			return *new_data[index];
 		}
 
 		T& operator [] (const unsigned int index) {
@@ -157,19 +151,11 @@ struct Vector2 {
 		YY yy;
 	};
 	
-	Vector2() : x((T)0), y((T)0) { }
-	
-	Vector2(const T value) : x(value), y(value) { }
+	Vector2(const T value = (T)0) : x(value), y(value) { }
 	
 	Vector2(const T value0, const T value1) : x(value0), y(value1) { }
 	
 	Vector2(const Vector2<T>& other) : x(other.x), y(other.y) { }
-	
-	Vector2<T>& operator = (const T& rhs) {
-		x = rhs;
-		y = rhs;
-		return *this;
-	}
 
 	Vector2<T>& operator = (const Vector2<T>& rhs) {
 		x = rhs.x;
@@ -225,16 +211,20 @@ struct Vector2 {
 		return *this;
 	}
 	
-	Vector2<T> operator ++ () {
-		return Vector2<T>(++x, ++y);
+	Vector2<T>& operator ++ () {
+		++x;
+		++y;
+		return *this;
 	}
 	
 	Vector2<T> operator ++ (int) {
 		return Vector2<T>(x++, y++);
 	}
 
-	Vector2<T> operator -- () {
-		return Vector2<T>(--x, --y);
+	Vector2<T>& operator -- () {
+		--x;
+		--y;
+		return *this;
 	}
 	
 	Vector2<T> operator -- (int) {
@@ -249,11 +239,11 @@ struct Vector2 {
 		return ((x != rhs.x) || (y != rhs.y));
 	}
 
-	T& operator [] (const unsigned int index) {
+	const T& operator [] (const unsigned int index) const {
 		return data[index];
 	}
 
-	T operator [] (const unsigned int index) const {
+	T& operator [] (const unsigned int index) {
 		return data[index];
 	}
 }; // Vector2
@@ -278,18 +268,11 @@ struct Vector3 {
 			typename Vector2<T>::ZZ zz;
 		};
 
-		Vector3<T>& operator = (const T& rhs) {
-			data[A] = rhs;
-			data[B] = rhs;
-			data[C] = rhs;
-			return *(Vector3<T>*)this;
-		}
-		
-		Vector3<T>& operator = (const Vector3<T>& rhs) {
+		Vector3<T>::Swizzle<A, B, C>& operator = (const Vector3<T>& rhs) {
 			data[A] = rhs.x;
 			data[B] = rhs.y;
 			data[C] = rhs.z;
-			return *(Vector3<T>*)this;
+			return *this;
 		}
 		
 		Vector3<T> operator + () const {
@@ -316,39 +299,39 @@ struct Vector3 {
 			return Vector3<T>(data[A] / rhs.x, data[B] / rhs.y, data[C] / rhs.z);
 		}
 		
-		Vector3<T>& operator += (const Vector3<T>& rhs) {
+		Vector3<T>::Swizzle<A, B, C>& operator += (const Vector3<T>& rhs) {
 			data[A] += rhs.x;
 			data[B] += rhs.y;
 			data[C] += rhs.z;
-			return (*(Vector3<T>*)this);
+			return *this;
 		}
 		
-		Vector3<T>& operator -= (const Vector3<T>& rhs) {
+		Vector3<T>::Swizzle<A, B, C>& operator -= (const Vector3<T>& rhs) {
 			data[A] -= rhs.x;
 			data[B] -= rhs.y;
 			data[C] -= rhs.z;
-			return (*(Vector3<T>*)this);
+			return *this;
 		}
 		
-		Vector3<T>& operator *= (const Vector3<T>& rhs) {
+		Vector3<T>::Swizzle<A, B, C>& operator *= (const Vector3<T>& rhs) {
 			data[A] *= rhs.x;
 			data[B] *= rhs.y;
 			data[C] *= rhs.z;
-			return (*(Vector3<T>*)this);
+			return *this;
 		}
 		
-		Vector3<T>& operator /= (const Vector3<T>& rhs) {
+		Vector3<T>::Swizzle<A, B, C>& operator /= (const Vector3<T>& rhs) {
 			data[A] /= rhs.x;
 			data[B] /= rhs.y;
 			data[C] /= rhs.z;
-			return (*(Vector3<T>*)this);
+			return *this;
 		}
 		
-		Vector3<T> operator ++ () {
+		Vector3<T>::Swizzle<A, B, C>& operator ++ () {
 			++data[A];
 			++data[B];
 			++data[C];
-			return (*(Vector3<T>*)this);
+			return *this;
 		}
 		
 		Vector3<T> operator ++ (int) {
@@ -359,11 +342,11 @@ struct Vector3 {
 			return ans;
 		}
 		
-		Vector3<T> operator -- () {
+		Vector3<T>::Swizzle<A, B, C>& operator -- () {
 			--data[A];
 			--data[B];
 			--data[C];
-			return (*(Vector3<T>*)this);
+			return *this;
 		}
 		
 		Vector3<T> operator -- (int) {
@@ -374,16 +357,6 @@ struct Vector3 {
 			return ans;
 		}
 		
-		T operator [] (const unsigned int index) const {
-			const T new_data[] = {data[A], data[B], data[C]};
-			return new_data[index];
-		}
-
-		T& operator [] (const unsigned int index) {
-			T* new_data[] = {&data[A], &data[B], &data[C]};
-			return *new_data[index];
-		}
-
 		bool operator == (const Vector3<T>& rhs) const {
 			return ((data[A] == rhs.x) &&
 					(data[B] == rhs.y) &&
@@ -394,6 +367,16 @@ struct Vector3 {
 			return ((data[A] != rhs.x) ||
 					(data[B] != rhs.y) ||
 					(data[C] != rhs.z));
+		}
+
+		const T& operator [] (const unsigned int index) const {
+			const T* new_data[] = {&data[A], &data[B], &data[C]};
+			return new_data[index];
+		}
+
+		T& operator [] (const unsigned int index) {
+			T* new_data[] = {&data[A], &data[B], &data[C]};
+			return *new_data[index];
 		}
 		
 		operator Vector3<T>() const {
@@ -504,25 +487,17 @@ struct Vector3 {
 		ZZZ zzz;
 	};
 	
-	Vector3() : x((T)0), y((T)0), z((T)0) { }
-	
-	Vector3(const T value) : x(value), y(value), z(value) { }
+	Vector3(const T value = (T)0) : x(value), y(value), z(value) { }
 	
 	Vector3(const T value0, const T value1, const T value2) : x(value0), y(value1), z(value2) { }
 	
 	Vector3(const Vector3<T>& other) : x(other.x), y(other.y), z(other.z) { }
 	
-	Vector3<T>& operator = (const T& rhs) {
-		x = rhs;
-		y = rhs;
-		z = rhs;
-		return *this;
-	}
-
 	Vector3<T>& operator = (const Vector3<T>& rhs) {
 		x = rhs.x;
 		y = rhs.y;
 		z = rhs.z;
+		return *this;
 	}
 	
 	Vector3<T> operator + () const {
@@ -577,16 +552,22 @@ struct Vector3 {
 		return *this;
 	}
 	
-	Vector3<T> operator ++ () {
-		return Vector3<T>(++x, ++y, ++z);
+	Vector3<T>& operator ++ () {
+		++x;
+		++y;
+		++z;
+		return *this;
 	}
 	
 	Vector3<T> operator ++ (int) {
 		return Vector3<T>(x++, y++, z++);
 	}
 
-	Vector3<T> operator -- () {
-		return Vector3<T>(--x, --y, --z);
+	Vector3<T>& operator -- () {
+		--x;
+		--y;
+		--z;
+		return *this;
 	}
 	
 	Vector3<T> operator -- (int) {
@@ -601,11 +582,11 @@ struct Vector3 {
 		return ((x != rhs.x) || (y != rhs.y) || (z != rhs.z));
 	}
 
-	T& operator [] (const unsigned int index) {
+	const T& operator [] (const unsigned int index) const {
 		return data[index];
 	}
 
-	T operator [] (const unsigned int index) const {
+	T& operator [] (const unsigned int index) {
 		return data[index];
 	}
 }; // Vector3
@@ -656,20 +637,12 @@ struct Vector4 {
 			typename Vector3<T>::ZZZ zzz;
 		};
 		
-		Vector4<T>& operator = (const T& rhs) {
-			data[A] = rhs;
-			data[B] = rhs;
-			data[C] = rhs;
-			data[D] = rhs;
-			return *(Vector4<T>*)this;
-		}
-
-		Vector4<T>& operator = (const Vector4<T>& rhs) {
+		Vector4<T>::Swizzle<A, B, C, D>& operator = (const Vector4<T>& rhs) {
 			data[A] = rhs.x;
 			data[B] = rhs.y;
 			data[C] = rhs.z;
 			data[D] = rhs.w;
-			return *(Vector4<T>*)this;
+			return *this;
 		}
 
 		Vector4<T> operator + () const {
@@ -708,44 +681,48 @@ struct Vector4 {
 								data[D] / rhs.w);
 		}
 		
-		Vector4<T>& operator += (const Vector4<T>& rhs) {
+		Vector4<T>::Swizzle<A, B, C, D>& operator += (const Vector4<T>& rhs) {
 			data[A] += rhs.x;
 			data[B] += rhs.y;
 			data[C] += rhs.z;
 			data[D] += rhs.w;
-			return (*(Vector4<T>*)this);
+			return *this;
 		}
 		
-		Vector4<T>& operator -= (const Vector4<T>& rhs) {
+		Vector4<T>::Swizzle<A, B, C, D>& operator -= (const Vector4<T>& rhs) {
 			data[A] -= rhs.x;
 			data[B] -= rhs.y;
 			data[C] -= rhs.z;
 			data[D] -= rhs.w;
-			return (*(Vector4<T>*)this);
+			return *this;
 		}
 		
-		Vector4<T>& operator *= (const Vector4<T>& rhs) {
+		Vector4<T>::Swizzle<A, B, C, D>& operator *= (const Vector4<T>& rhs) {
 			data[A] *= rhs.x;
 			data[B] *= rhs.y;
 			data[C] *= rhs.z;
 			data[D] *= rhs.w;
-			return (*(Vector4<T>*)this);
+			return *this;
 		}
 		
-		Vector4<T>& operator /= (const Vector4<T>& rhs) {
+		Vector4<T>::Swizzle<A, B, C, D>& operator /= (const Vector4<T>& rhs) {
 			data[A] /= rhs.x;
 			data[B] /= rhs.y;
 			data[C] /= rhs.z;
 			data[D] /= rhs.w;
-			return (*(Vector4<T>*)this);
+			return *this;
 		}
 		
-		Vector4<T> operator ++ () {
-			return Vector4<T>(++data[A], ++data[B], ++data[C], ++data[D]);
+		Vector4<T>::Swizzle<A, B, C, D>& operator ++ () {
+			++data[A];
+			++data[B];
+			++data[C];
+			++data[D];
+			return *this;
 		}
 		
 		Vector4<T> operator ++ (int) {
-			Vector4<T> ans(data[A], data[B], data[C], data[D]);
+			const Vector4<T> ans(data[A], data[B], data[C], data[D]);
 			++data[A];
 			++data[B];
 			++data[C];
@@ -753,12 +730,16 @@ struct Vector4 {
 			return ans;
 		}
 		
-		Vector4<T> operator -- () {
-			return Vector4<T>(--data[A], --data[B], --data[C], --data[D]);
+		Vector4<T>::Swizzle<A, B, C, D>& operator -- () {
+			--data[A];
+			--data[B];
+			--data[C];
+			--data[D];
+			return *this;
 		}
 		
 		Vector4<T> operator -- (int) {
-			Vector4<T> ans(data[A], data[B], data[C], data[D]);
+			const Vector4<T> ans(data[A], data[B], data[C], data[D]);
 			--data[A];
 			--data[B];
 			--data[C];
@@ -780,8 +761,8 @@ struct Vector4 {
 					(data[D] != rhs.w));
 		}
 
-		T operator [] (const unsigned int index) const {
-			const T new_data[] = {data[A], data[B], data[C], data[D]};
+		const T& operator [] (const unsigned int index) const {
+			const T* new_data[] = {&data[A], &data[B], &data[C], &data[D]};
 			return new_data[index];
 		}
 
@@ -1367,9 +1348,7 @@ struct Vector4 {
 		WWWW wwww;
 	}; // Swizzle
 	
-	Vector4() : x((T)0), y((T)0), z((T)0), w((T)0) { }
-	
-	Vector4(const T value) : x(value), y(value), z(value), w(value) { }
+	Vector4(const T value = (T)0) : x(value), y(value), z(value), w(value) { }
 	
 	Vector4(const T value0, const T value1, const T value2, const T value3)
 		: x(value0), y(value1), z(value2), w(value3) { }
@@ -1377,14 +1356,6 @@ struct Vector4 {
 	Vector4(const Vector4<T>& other)
 		: x(other.x), y(other.y), z(other.z), w(other.w) { }
 	
-	Vector4<T>& operator = (const T& rhs) {
-		x = rhs;
-		y = rhs;
-		z = rhs;
-		w = rhs;
-		return *this;
-	}
-
 	Vector4<T>& operator = (const Vector4<T>& rhs) {
 		x = rhs.x;
 		y = rhs.y;
@@ -1394,7 +1365,7 @@ struct Vector4 {
 	}
 	
 	Vector4<T> operator + () const {
-		return Vector4<T>(x, y, z, w);
+		return Vector4<T>(+x, +y, +z, +w);
 	}
 	
 	Vector4<T> operator - () const {
@@ -1449,8 +1420,12 @@ struct Vector4 {
 		return *this;
 	}
 	
-	Vector4<T> operator ++ () {
-		return Vector4<T>(++x, ++y, ++z, ++w);
+	Vector4<T>& operator ++ () {
+		++x;
+		++y;
+		++z;
+		++w;
+		return *this;
 	}
 	
 	Vector4<T> operator ++ (int) {
@@ -1458,7 +1433,11 @@ struct Vector4 {
 	}
 
 	Vector4<T> operator -- () {
-		return Vector4<T>(--x, --y, --z, --w);
+		--x;
+		--y;
+		--z;
+		--w;
+		return *this;
 	}
 	
 	Vector4<T> operator -- (int) {
@@ -1473,11 +1452,11 @@ struct Vector4 {
 		return ((x != rhs.x) || (y != rhs.y) || (z != rhs.z) || (w != rhs.w));
 	}
 
-	T& operator [] (const unsigned int index) {
+	const T& operator [] (const unsigned int index) const {
 		return data[index];
 	}
 
-	T operator [] (const unsigned int index) const {
+	T& operator [] (const unsigned int index) {
 		return data[index];
 	}
 }; // Vector4
